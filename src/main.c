@@ -6,6 +6,32 @@
 #include <sys/uio.h>
 #include <sys/user.h>
 
+void stop_at_syscall(int pid)
+{
+	if (ptrace(PTRACE_SYSCALL, pid, (void*)0, (void*)0) < 0)
+	{
+		perror("problem with ptrace SYSCALL");
+		exit(4);
+	}
+	waitpid(pid, NULL, 0);
+}
+
+void print_registers(int pid)
+{
+	struct iovec data;
+	data.iov_base = alloca(1024);
+	data.iov_len = 1024;
+
+	if (ptrace(PTRACE_GETREGSET, pid, 1, &data) < 0)
+	{
+		perror("Problem with ptrace GETREGSET");
+		exit(3);
+	}
+
+	struct user_regs_struct *regs = data.iov_base;
+	printf("rax = %llu\n", regs->rax);
+}
+
 int main(int argc, char** argv)
 {
 	if (argc < 2)
@@ -44,60 +70,16 @@ int main(int argc, char** argv)
 		if (ptrace(PTRACE_INTERRUPT, pid, (void*)0, (void*)0) < 0)
 			perror("problem with ptrace");
 
-		int wstatus;
-
-		waitpid(pid, &wstatus, 0);
+		waitpid(pid, NULL, 0);
 
 		while (1)
 		{
-			//child will continue but stop when entering next syscall
-			if (ptrace(PTRACE_SYSCALL, pid, (void*)0, (void*)0) < 0)
-			{
-				perror("problem with ptrace A");
-				break;
-			}
-			printf("ptrace parent syscall 1\n");
-
-			//wait until process is stopped
-			waitpid(pid, &wstatus, 0);
-
-			struct iovec data;
-			data.iov_base = malloc(1024);
-			data.iov_len = 1024;
-
-			//read registers
-			if (ptrace(PTRACE_GETREGSET, pid, 1, &data) < 0)
-			{
-				perror("problem with ptrace C");
-				break;
-			}
-
-			struct user_regs_struct *regs = data.iov_base;
-			printf("rax = %llu\n", regs->rax);
-
-			//child will continue but stop when leaving syscall
-			if (ptrace(PTRACE_SYSCALL, pid, (void*)0, (void*)0) < 0)
-			{
-				perror("problem with ptrace B\n");
-				break;
-			}
-			printf("ptrace parent syscall 2\n");
-
-			//wait until process is stopped
-			waitpid(pid, &wstatus, 0);
-
-			//read registers
-			if (ptrace(PTRACE_GETREGSET, pid, 1, &data) < 0)
-			{
-				perror("problem with ptrace D\n");
-				break;
-			}
-
-			regs = data.iov_base;
-			printf("rax = %lld\n", regs->rax);
+			stop_at_syscall(pid);
+			print_registers(pid);
+			stop_at_syscall(pid);
+			print_registers(pid);
 		}
 
-		waitpid(pid, &wstatus, 0);
+		waitpid(pid, NULL, 0);
 	}
-
 }
