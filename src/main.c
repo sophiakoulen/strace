@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <sys/ptrace.h>
+#include <sys/uio.h>
+#include <sys/user.h>
 
 int main(int argc, char** argv)
 {
@@ -48,27 +50,51 @@ int main(int argc, char** argv)
 
 		while (1)
 		{
-			//inspect arguments of syscall
+			//child will continue but stop when entering next syscall
 			if (ptrace(PTRACE_SYSCALL, pid, (void*)0, (void*)0) < 0)
 			{
 				perror("problem with ptrace A");
 				break;
 			}
+			printf("ptrace parent syscall 1\n");
 
-			printf("bonjour\n");
-
+			//wait until process is stopped
 			waitpid(pid, &wstatus, 0);
 
-			//inspect return value of syscall
-			if (ptrace(PTRACE_SYSCALL, pid, (void*)0, (void*)0) < 0)
+			struct iovec data;
+			data.iov_base = malloc(1024);
+			data.iov_len = 1024;
+
+			//read registers
+			if (ptrace(PTRACE_GETREGSET, pid, 1, &data) < 0)
 			{
-				perror("problem with ptrace B");
+				perror("problem with ptrace C");
 				break;
 			}
 
-			printf("bonjour2\n");
+			struct user_regs_struct *regs = data.iov_base;
+			printf("rax = %llu\n", regs->rax);
 
+			//child will continue but stop when leaving syscall
+			if (ptrace(PTRACE_SYSCALL, pid, (void*)0, (void*)0) < 0)
+			{
+				perror("problem with ptrace B\n");
+				break;
+			}
+			printf("ptrace parent syscall 2\n");
+
+			//wait until process is stopped
 			waitpid(pid, &wstatus, 0);
+
+			//read registers
+			if (ptrace(PTRACE_GETREGSET, pid, 1, &data) < 0)
+			{
+				perror("problem with ptrace D\n");
+				break;
+			}
+
+			regs = data.iov_base;
+			printf("rax = %lld\n", regs->rax);
 		}
 
 		waitpid(pid, &wstatus, 0);
