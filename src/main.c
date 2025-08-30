@@ -6,29 +6,43 @@
 #include <sys/uio.h>
 #include <sys/user.h>
 
-void wait_and_print(int pid)
+//return 1 if stopped by smthg else than sigtrap
+int wait_and_print(int pid)
 {
 	int status;
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))
 	{
-		printf("child exited with code %d\n", WEXITSTATUS(status));
+		printf("+++ exited with %d +++\n", WEXITSTATUS(status));
+		fflush(stdout);
 		exit(0);
 	}
 	else if (WIFSIGNALED(status))
 	{
-		printf("child got signal no %d\n", WTERMSIG(status));
+		printf("+++ killed by signal %d +++\n", WTERMSIG(status));
+		fflush(stdout);
 	   	exit(0);	
 	}
 	else if (WIFSTOPPED(status))
 	{
-		printf("child stopped with signal no %d\n", WSTOPSIG(status));
+		if (WSTOPSIG(status) == SIGTRAP)
+		{
+			printf("sigtrap\n");
+			fflush(stdout);
+			return 0;
+		}
+
+		printf("--- stopped by %d ---\n", WSTOPSIG(status));
+		fflush(stdout);
+		return 1;
 	}
 	else
 	{
-		printf("something else happened.\n");
+		printf("HELP SOMETHING ELSE HAPPENED.\n");
+		fflush(stdout);
+		exit(1);
 	}
-	fflush(stdout);
+	return 0;
 }
 
 void stop_at_syscall(int pid)
@@ -38,7 +52,6 @@ void stop_at_syscall(int pid)
 		perror("problem with ptrace SYSCALL");
 		exit(4);
 	}
-	wait_and_print(pid);
 }
 
 void print_sys_enter(int pid)
@@ -109,16 +122,30 @@ int main(int argc, char** argv)
 		if (ptrace(PTRACE_SEIZE, pid, (void*)0, (void*)0) < 0)
 			perror("problem with ptrace A");
 
-		//if (ptrace(PTRACE_INTERRUPT, pid, (void*)0, (void*)0) < 0)
-		//	perror("problem with ptrace B");
-
 		wait_and_print(pid);
 
 		while (1)
 		{
 			stop_at_syscall(pid);
+			
+			while (wait_and_print(pid))
+			{
+				if (ptrace(PTRACE_LISTEN, pid, (void*)0, (void*)0) < 0)
+					perror("problem with ptrace LISTEN");
+				kill(pid, SIGCONT);
+			}
+
 			print_sys_enter(pid);
+			
 			stop_at_syscall(pid);
+			
+			while (wait_and_print(pid))
+			{
+				if (ptrace(PTRACE_LISTEN, pid, (void*)0, (void*)0) < 0)
+					perror("problem with ptrace LISTEN");
+				kill(pid, SIGCONT);
+			}
+			
 			print_sys_exit(pid);
 		}
 	}
