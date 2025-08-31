@@ -1,3 +1,4 @@
+#include "ft_strace.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -5,12 +6,12 @@
 #include <sys/ptrace.h>
 #include <sys/uio.h>
 #include <sys/user.h>
+#include <string.h>
 
-//return 1 if stopped by smthg else than sigtrap
 int wait_and_print(int pid)
 {
 	int status;
-	waitpid(pid, &status, 0);
+	waitpid(pid, &status, __WALL);
 	if (WIFEXITED(status))
 	{
 		printf("+++ exited with %d +++\n", WEXITSTATUS(status));
@@ -19,22 +20,40 @@ int wait_and_print(int pid)
 	}
 	else if (WIFSIGNALED(status))
 	{
-		printf("+++ killed by signal %d +++\n", WTERMSIG(status));
+		printf("+++ killed by %s +++\n", sigabbrev[WTERMSIG(status)]);
 		fflush(stdout);
 	   	exit(0);	
 	}
 	else if (WIFSTOPPED(status))
 	{
-		if (WSTOPSIG(status) == SIGTRAP)
+		if (WSTOPSIG(status) == (SIGTRAP|0x80))
 		{
-			printf("sigtrap\n");
-			fflush(stdout);
+			//entry or exit from syscall
 			return 0;
 		}
+		else if (WSTOPSIG(status) != SIGSTOP
+				&& WSTOPSIG(status) != SIGTSTP
+				&& WSTOPSIG(status) != SIGTTIN
+				&& WSTOPSIG(status) != SIGTTOU)
+		{
+			printf("--- stopped by %s ---\n", sigabbrev[WSTOPSIG(status)]);
+			fflush(stdout);
 
-		printf("--- stopped by %d ---\n", WSTOPSIG(status));
-		fflush(stdout);
-		return 1;
+			if (ptrace(PTRACE_CONT, pid, 0, WSTOPSIG(status)))
+			{
+				perror("problem with PTRACE_CONT");
+				exit(1);
+			}
+
+			return wait_and_print(pid);
+		}
+		else
+		{
+			printf("--- stopped by %s ---\n", sigabbrev[WSTOPSIG(status)]);
+			printf("maybe group stop?\n");
+			fflush(stdout);
+			exit(2);
+		}
 	}
 	else
 	{
@@ -120,32 +139,25 @@ int main(int argc, char** argv)
 		fflush(stdout);
 
 		if (ptrace(PTRACE_SEIZE, pid, (void*)0, (void*)0) < 0)
-			perror("problem with ptrace A");
+			perror("problem with ptrace SEIZE.\n");
 
-		wait_and_print(pid);
+		waitpid(pid, NULL, 0);
+
+		if (ptrace(PTRACE_SETOPTIONS, pid, (void*)0, PTRACE_O_TRACESYSGOOD) < 0)
+			perror("problem with ptrace SETOPTIONS.\n");
 
 		while (1)
 		{
 			stop_at_syscall(pid);
 			
-			while (wait_and_print(pid))
-			{
-				if (ptrace(PTRACE_LISTEN, pid, (void*)0, (void*)0) < 0)
-					perror("problem with ptrace LISTEN");
-				kill(pid, SIGCONT);
-			}
+			wait_and_print(pid);
 
 			print_sys_enter(pid);
 			
 			stop_at_syscall(pid);
 			
-			while (wait_and_print(pid))
-			{
-				if (ptrace(PTRACE_LISTEN, pid, (void*)0, (void*)0) < 0)
-					perror("problem with ptrace LISTEN");
-				kill(pid, SIGCONT);
-			}
-			
+			wait_and_print(pid);
+
 			print_sys_exit(pid);
 		}
 	}
