@@ -7,6 +7,7 @@
 #include <sys/uio.h>
 #include <sys/user.h>
 #include <string.h>
+#include <errno.h>
 
 int wait_and_print(int pid)
 {
@@ -31,28 +32,37 @@ int wait_and_print(int pid)
 			//entry or exit from syscall
 			return 0;
 		}
-		else if (WSTOPSIG(status) != SIGSTOP
-				&& WSTOPSIG(status) != SIGTSTP
-				&& WSTOPSIG(status) != SIGTTIN
-				&& WSTOPSIG(status) != SIGTTOU)
-		{
-			printf("--- stopped by %s ---\n", sigabbrev[WSTOPSIG(status)]);
-			fflush(stdout);
-
-			if (ptrace(PTRACE_CONT, pid, 0, WSTOPSIG(status)))
-			{
-				perror("problem with PTRACE_CONT");
-				exit(1);
-			}
-
-			return wait_and_print(pid);
-		}
 		else
 		{
-			printf("--- stopped by %s ---\n", sigabbrev[WSTOPSIG(status)]);
-			printf("maybe group stop?\n");
-			fflush(stdout);
-			exit(2);
+			if ((WSTOPSIG(status) == SIGSTOP
+				|| WSTOPSIG(status) == SIGTSTP
+				|| WSTOPSIG(status) == SIGTTIN
+				|| WSTOPSIG(status) == SIGTTOU)
+				&& status>>16  ==  PTRACE_EVENT_STOP)
+			{
+					printf("group stop %s\n", sigabbrev[WSTOPSIG(status)]);
+					fflush(stdout);
+
+					if (ptrace(PTRACE_LISTEN, pid, 0, WSTOPSIG(status)))
+					{
+						perror("problem with PTRACE_LISTEN");
+						exit(1);
+					}
+					return wait_and_print(pid);
+			}
+			else
+			{
+				printf("--- stopped by %s ---\n", sigabbrev[WSTOPSIG(status)]);
+				fflush(stdout);
+
+				if (ptrace(PTRACE_CONT, pid, 0, WSTOPSIG(status)))
+				{
+					perror("problem with PTRACE_CONT");
+					exit(1);
+				}
+
+				return wait_and_print(pid);
+			}
 		}
 	}
 	else
