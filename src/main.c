@@ -40,7 +40,7 @@ int wait_and_print(int pid)
 				|| WSTOPSIG(status) == SIGTTOU)
 				&& status>>16  ==  PTRACE_EVENT_STOP)
 			{
-					printf("group stop %s\n", sigabbrev[WSTOPSIG(status)]);
+					printf("-- stopped by %s ---\n", sigabbrev[WSTOPSIG(status)]);
 					fflush(stdout);
 
 					if (ptrace(PTRACE_LISTEN, pid, 0, WSTOPSIG(status)))
@@ -52,12 +52,13 @@ int wait_and_print(int pid)
 			}
 			else
 			{
-				printf("--- stopped by %s ---\n", sigabbrev[WSTOPSIG(status)]);
+				//need to print additional siginfo
+				printf("--- %s ---\n", sigabbrev[WSTOPSIG(status)]);
 				fflush(stdout);
 
-				if (ptrace(PTRACE_CONT, pid, 0, WSTOPSIG(status)))
+				if (ptrace(PTRACE_SYSCALL, pid, 0, WSTOPSIG(status)))
 				{
-					perror("problem with PTRACE_CONT");
+					perror("problem with PTRACE_SYSCALL");
 					exit(1);
 				}
 
