@@ -1,3 +1,4 @@
+#include "ft_syscalls.h"
 #include "ft_strace.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -97,8 +98,8 @@ void print_sys_enter(int pid)
 	}
 
 	struct user_regs_struct *regs = data.iov_base;
-	printf("syscall number %lld with args: rdi = %llu, rsi = %llu, rdx = %llu, rcx = %llu\n",
-			regs->orig_rax, regs->rdi, regs->rsi, regs->rdx, regs->rcx);
+	printf("%s - syscall number %lld with args: rdi = %llu, rsi = %llu, rdx = %llu, rcx = %llu\n",
+			syscalls[regs->orig_rax], regs->orig_rax, regs->rdi, regs->rsi, regs->rdx, regs->rcx);
 }
 
 void print_sys_exit(int pid)
