@@ -10,18 +10,28 @@
 #include <string.h>
 #include <errno.h>
 
+#define IN_SYS 1
+#define OUT_SYS 0;
+int current_status = OUT_SYS;
+
 int wait_and_print(int pid)
 {
 	int status;
 	waitpid(pid, &status, __WALL);
 	if (WIFEXITED(status))
 	{
+		if (current_status == IN_SYS)
+			printf("\n");
+
 		printf("+++ exited with %d +++\n", WEXITSTATUS(status));
 		fflush(stdout);
 		exit(0);
 	}
 	else if (WIFSIGNALED(status))
 	{
+		if (current_status == IN_SYS)
+			printf("\n");
+
 		printf("+++ killed by %s +++\n", sigabbrev[WTERMSIG(status)]);
 		fflush(stdout);
 	   	exit(0);	
@@ -41,6 +51,9 @@ int wait_and_print(int pid)
 				|| WSTOPSIG(status) == SIGTTOU)
 				&& status>>16  ==  PTRACE_EVENT_STOP)
 			{
+					if (current_status == IN_SYS)
+						printf("\n");
+
 					printf("-- stopped by %s ---\n", sigabbrev[WSTOPSIG(status)]);
 					fflush(stdout);
 
@@ -53,6 +66,9 @@ int wait_and_print(int pid)
 			}
 			else
 			{
+				if (current_status == IN_SYS)
+					printf("\n");
+
 				//need to print additional siginfo
 				printf("--- %s ---\n", sigabbrev[WSTOPSIG(status)]);
 				fflush(stdout);
@@ -98,8 +114,10 @@ void print_sys_enter(int pid)
 	}
 
 	struct user_regs_struct *regs = data.iov_base;
-	printf("%s - syscall number %lld with args: rdi = %llu, rsi = %llu, rdx = %llu, rcx = %llu\n",
-			syscalls[regs->orig_rax], regs->orig_rax, regs->rdi, regs->rsi, regs->rdx, regs->rcx);
+	printf("%s(%llu, %llu, %llu, %llu, %llu, %llu)",
+			syscalls[regs->orig_rax], regs->rdi, regs->rsi, regs->rdx, regs->r10, regs->r8, regs->r9);
+
+	current_status = IN_SYS;
 }
 
 void print_sys_exit(int pid)
@@ -115,7 +133,9 @@ void print_sys_exit(int pid)
 	}
 
 	struct user_regs_struct *regs = data.iov_base;
-	printf("return value = %lld\n", regs->rax);
+	printf("\t= %lld\n", regs->rax);
+
+	current_status = OUT_SYS;
 }
 
 int main(int argc, char** argv)
@@ -135,9 +155,6 @@ int main(int argc, char** argv)
 	else if (pid == 0)
 	{
 		//in child process;
-		printf("Hi i'm the child process\n");
-		fflush(stdout);
-
 		//send stop to itself
 		kill(getpid(), SIGSTOP);
 
@@ -147,9 +164,6 @@ int main(int argc, char** argv)
 	else
 	{
 		//in parent process;
-		printf("hello i'm the parent of pid %d\n", pid);
-		fflush(stdout);
-
 		if (ptrace(PTRACE_SEIZE, pid, (void*)0, (void*)0) < 0)
 			perror("problem with ptrace SEIZE.\n");
 
