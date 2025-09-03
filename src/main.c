@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include "ft_syscalls.h"
 #include "ft_strace.h"
 #include <stdio.h>
@@ -133,7 +134,10 @@ void print_sys_exit(int pid)
 	}
 
 	struct user_regs_struct *regs = data.iov_base;
-	printf("\t= %lld\n", regs->rax);
+	if (regs->rax >= -4095 && regs->rax <= -1)
+		printf("\t= %s\n", strerrorname_np(-1 * regs->rax));
+	else
+		printf("\t= %lld\n", regs->rax);
 
 	current_status = OUT_SYS;
 }
