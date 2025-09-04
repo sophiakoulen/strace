@@ -1,6 +1,8 @@
 #define _GNU_SOURCE
 #include "ft_syscalls.h"
+#include "ft_syscalls32.h"
 #include "ft_strace.h"
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -11,9 +13,33 @@
 #include <string.h>
 #include <errno.h>
 
+struct i386_user_regs_struct {
+	uint32_t ebx;
+	uint32_t ecx;
+	uint32_t edx;
+	uint32_t esi;
+	uint32_t edi;
+	uint32_t ebp;
+	uint32_t eax;
+	uint32_t xds;
+	uint32_t xes;
+	uint32_t xfs;
+	uint32_t xgs;
+	uint32_t orig_eax;
+	uint32_t eip;
+	uint32_t xcs;
+	uint32_t eflags;
+	uint32_t esp;
+	uint32_t xss;
+};
+
 #define IN_SYS 1
-#define OUT_SYS 0;
+#define OUT_SYS 0
+#define X86_64 0
+#define X86_32 1
+
 int current_status = OUT_SYS;
+int current_mode = X86_64;
 
 int wait_and_print(int pid)
 {
@@ -84,6 +110,7 @@ int wait_and_print(int pid)
 			}
 		}
 	}
+
 	else
 	{
 		printf("HELP SOMETHING ELSE HAPPENED.\n");
@@ -114,10 +141,34 @@ void print_sys_enter(int pid)
 		exit(3);
 	}
 
-	struct user_regs_struct *regs = data.iov_base;
-	printf("%s(%llu, %llu, %llu, %llu, %llu, %llu)",
+	if (data.iov_len == sizeof(struct user_regs_struct))
+	{
+		if (current_mode != X86_64)
+		{
+			current_mode = X86_64;
+			printf("[ Process PID=%d runs in 64 bit mode. ]\n", pid);
+		}
+		struct user_regs_struct *regs = data.iov_base;
+		printf("%s(%llu, %llu, %llu, %llu, %llu, %llu)",
 			syscalls[regs->orig_rax], regs->rdi, regs->rsi, regs->rdx, regs->r10, regs->r8, regs->r9);
+	}
+	else if (data.iov_len == sizeof(struct i386_user_regs_struct))
+	{
+		if (current_mode != X86_32)
+		{
+			current_mode = X86_32;
+			printf("[ Process PID=%d runs in 32 bit mode. ]\n", pid);
+		}
+		struct i386_user_regs_struct *regs = data.iov_base;
+		printf("%s(%d, %d, %d, %d, %d, %d)",
+			syscalls32[regs->orig_eax], regs->ebx, regs->ecx, regs->edx, regs->esi, regs->edi, regs->ebp);
 
+	}
+	else
+	{
+		printf("PROBLEM\n");
+		exit(3);
+	}
 	current_status = IN_SYS;
 }
 
@@ -133,12 +184,32 @@ void print_sys_exit(int pid)
 		exit(3);
 	}
 
-	struct user_regs_struct *regs = data.iov_base;
-	if (regs->rax >= -4095 && regs->rax <= -1)
-		printf("\t= %s\n", strerrorname_np(-1 * regs->rax));
+	if (data.iov_len == sizeof(struct user_regs_struct))
+	{
+		if (current_mode != X86_64)
+		{
+			current_mode = X86_64;
+			printf("[ Process PID=%d runs in 64 bit mode. ]\n", pid);
+		}
+		struct user_regs_struct *regs = data.iov_base;
+		if ((long long int)regs->rax >= -4095 && (long long int)regs->rax <= -1)
+			printf("\t= %s\n", strerrorname_np(-1 * regs->rax));
+		else
+			printf("\t= %lld\n", regs->rax);
+	}
 	else
-		printf("\t= %lld\n", regs->rax);
-
+	{
+		if (current_mode != X86_32)
+		{
+			current_mode = X86_32;
+			printf("[ Process PID=%d runs in 32 bit mode. ]\n", pid);
+		}
+		struct i386_user_regs_struct *regs = data.iov_base;
+		if ((int32_t)regs->eax >= -4095 && (int32_t)regs->eax <= -1)
+			printf("\t= %s\n", strerrorname_np(-1 * regs->eax));
+		else
+			printf("\t= %d\n", regs->eax);
+	}
 	current_status = OUT_SYS;
 }
 

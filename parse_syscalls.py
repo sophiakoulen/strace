@@ -1,5 +1,5 @@
 import json
-jsondata = open("syscalls.json");
+jsondata = open("syscalls32.json");
 data = json.load(jsondata);
 
 dict = {}
