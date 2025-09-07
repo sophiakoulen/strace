@@ -129,6 +129,30 @@ void stop_at_syscall(int pid)
 	}
 }
 
+void print_arg32(uint32_t reg, enum arg_type_e type)
+{
+	 if (type == INT)
+		 printf("%d", reg);
+	 else if (type == UINT)
+		 printf("%u", reg);
+	 else if (type == STR)
+		 printf("\"%s\"", (char*)reg);
+	 else
+		 printf("%p", (void*)reg);
+}
+
+void print_arg64(unsigned long long int reg, enum arg_type_e type)
+{
+	 if (type == INT)
+		 printf("%lld", reg);
+	 else if (type == UINT)
+		 printf("%llu", reg);
+	 else if (type == STR)
+		printf("\"%s\"", (char*)reg);
+	 else
+		 printf("%p", (void*)reg);
+}
+
 void print_sys_enter(int pid)
 {
 	struct iovec data;
@@ -149,8 +173,18 @@ void print_sys_enter(int pid)
 			printf("[ Process PID=%d runs in 64 bit mode. ]\n", pid);
 		}
 		struct user_regs_struct *regs = data.iov_base;
-		printf("%s(%llu, %llu, %llu, %llu, %llu, %llu)",
-			syscalls[regs->orig_rax], regs->rdi, regs->rsi, regs->rdx, regs->r10, regs->r8, regs->r9);
+		printf("%s(", syscalls[regs->orig_rax].name);
+		unsigned int l = syscalls[regs->orig_rax].arg_count;
+		unsigned long long int args[6] = {regs->rdi, regs->rsi, regs->rdx, regs->r10, regs->r8, regs->r9};
+		unsigned int i;
+		for (i = 0; i + 1 < l; i++)
+		{
+			print_arg64(args[i], (syscalls[regs->orig_rax].args)[i]);
+			printf(", ");
+		}
+		if (l > 0)
+			print_arg64(args[i], syscalls[regs->orig_rax].args[i]);
+		printf(")");
 	}
 	else if (data.iov_len == sizeof(struct i386_user_regs_struct))
 	{
@@ -160,9 +194,18 @@ void print_sys_enter(int pid)
 			printf("[ Process PID=%d runs in 32 bit mode. ]\n", pid);
 		}
 		struct i386_user_regs_struct *regs = data.iov_base;
-		printf("%s(%d, %d, %d, %d, %d, %d)",
-			syscalls32[regs->orig_eax], regs->ebx, regs->ecx, regs->edx, regs->esi, regs->edi, regs->ebp);
-
+		printf("%s(", syscalls32[regs->orig_eax].name);
+		unsigned int l = syscalls32[regs->orig_eax].arg_count;
+		unsigned long long int args[6] = {regs->ebx, regs->ecx, regs->edx, regs->esi, regs->edi, regs->ebp};
+		unsigned int i;
+		for (i = 0; i + 1 < l; i++)
+		{
+			print_arg32(args[i], (syscalls32[regs->orig_eax].args)[i]);
+			printf(", ");
+		}
+		if (l > 0)
+			print_arg32(args[i], syscalls32[regs->orig_eax].args[i]);
+		printf(")");
 	}
 	else
 	{
