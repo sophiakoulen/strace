@@ -1,6 +1,9 @@
+#ifndef FT_SYSCALLS_H
+# define FT_SYSCALLS_H
 enum arg_type_e {STR, PTR, UINT, INT};
 struct syscall_s { const char* name; unsigned int arg_count; enum arg_type_e args[6]; };
-struct syscall_s syscalls[] = {
+
+struct syscall_s syscalls64[] = {
 	{
 		"read", 3,
 			{
@@ -2808,3 +2811,3392 @@ struct syscall_s syscalls[] = {
 			}
 	},
 };
+
+struct syscall_s syscalls32[] = {
+	{
+		"restart_syscall", 0,
+			{
+			}
+	},
+	{
+		"exit", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"fork", 0,
+			{
+			}
+	},
+	{
+		"read", 3,
+			{
+				UINT,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"write", 3,
+			{
+				UINT,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"open", 3,
+			{
+				STR,
+				INT,
+				INT,
+			}
+	},
+	{
+		"close", 1,
+			{
+				UINT,
+			}
+	},
+	{
+		"waitpid", 3,
+			{
+				INT,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"creat", 2,
+			{
+				STR,
+				INT,
+			}
+	},
+	{
+		"link", 2,
+			{
+				STR,
+				STR,
+			}
+	},
+	{
+		"unlink", 1,
+			{
+				STR,
+			}
+	},
+	{
+		"execve", 3,
+			{
+				STR,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"chdir", 1,
+			{
+				STR,
+			}
+	},
+	{
+		"time", 1,
+			{
+				PTR,
+			}
+	},
+	{
+		"mknod", 3,
+			{
+				STR,
+				INT,
+				UINT,
+			}
+	},
+	{
+		"chmod", 2,
+			{
+				STR,
+				INT,
+			}
+	},
+	{
+		"lchown16", 3,
+			{
+				STR,
+				INT,
+				INT,
+			}
+	},
+	{0, 0, {}},
+	{
+		"stat", 2,
+			{
+				STR,
+				PTR,
+			}
+	},
+	{
+		"lseek", 3,
+			{
+				UINT,
+				INT,
+				UINT,
+			}
+	},
+	{
+		"getpid", 0,
+			{
+			}
+	},
+	{
+		"mount", 5,
+			{
+				STR,
+				STR,
+				PTR,
+				UINT,
+				PTR,
+			}
+	},
+	{
+		"oldumount", 1,
+			{
+				STR,
+			}
+	},
+	{
+		"setuid16", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"getuid16", 0,
+			{
+			}
+	},
+	{
+		"stime", 1,
+			{
+				PTR,
+			}
+	},
+	{
+		"ptrace", 4,
+			{
+				INT,
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"alarm", 1,
+			{
+				UINT,
+			}
+	},
+	{
+		"fstat", 2,
+			{
+				UINT,
+				PTR,
+			}
+	},
+	{
+		"pause", 0,
+			{
+			}
+	},
+	{
+		"utime", 2,
+			{
+				STR,
+				PTR,
+			}
+	},
+	{0, 0, {}},
+	{0, 0, {}},
+	{
+		"access", 2,
+			{
+				STR,
+				INT,
+			}
+	},
+	{
+		"nice", 1,
+			{
+				INT,
+			}
+	},
+	{0, 0, {}},
+	{
+		"sync", 0,
+			{
+			}
+	},
+	{
+		"kill", 2,
+			{
+				INT,
+				INT,
+			}
+	},
+	{
+		"rename", 2,
+			{
+				STR,
+				STR,
+			}
+	},
+	{
+		"mkdir", 2,
+			{
+				STR,
+				INT,
+			}
+	},
+	{
+		"rmdir", 1,
+			{
+				STR,
+			}
+	},
+	{
+		"dup", 1,
+			{
+				UINT,
+			}
+	},
+	{
+		"pipe", 1,
+			{
+				PTR,
+			}
+	},
+	{
+		"times", 1,
+			{
+				PTR,
+			}
+	},
+	{0, 0, {}},
+	{
+		"brk", 1,
+			{
+				UINT,
+			}
+	},
+	{
+		"setgid16", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"getgid16", 0,
+			{
+			}
+	},
+	{
+		"signal", 2,
+			{
+				INT,
+				INT,
+			}
+	},
+	{
+		"geteuid16", 0,
+			{
+			}
+	},
+	{
+		"getegid16", 0,
+			{
+			}
+	},
+	{
+		"acct", 1,
+			{
+				STR,
+			}
+	},
+	{
+		"umount", 2,
+			{
+				STR,
+				INT,
+			}
+	},
+	{0, 0, {}},
+	{
+		"ioctl", 3,
+			{
+				UINT,
+				UINT,
+				INT,
+			}
+	},
+	{
+		"fcntl64", 3,
+			{
+				UINT,
+				UINT,
+				INT,
+			}
+	},
+	{0, 0, {}},
+	{
+		"setpgid", 2,
+			{
+				INT,
+				INT,
+			}
+	},
+	{0, 0, {}},
+	{
+		"olduname", 1,
+			{
+				PTR,
+			}
+	},
+	{
+		"umask", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"chroot", 1,
+			{
+				STR,
+			}
+	},
+	{
+		"ustat", 2,
+			{
+				UINT,
+				PTR,
+			}
+	},
+	{
+		"dup2", 2,
+			{
+				UINT,
+				UINT,
+			}
+	},
+	{
+		"getppid", 0,
+			{
+			}
+	},
+	{
+		"getpgrp", 0,
+			{
+			}
+	},
+	{
+		"setsid", 0,
+			{
+			}
+	},
+	{
+		"sigaction", 3,
+			{
+				INT,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"sgetmask", 0,
+			{
+			}
+	},
+	{
+		"ssetmask", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"setreuid16", 2,
+			{
+				INT,
+				INT,
+			}
+	},
+	{
+		"setregid16", 2,
+			{
+				INT,
+				INT,
+			}
+	},
+	{
+		"sigsuspend", 3,
+			{
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"sigpending", 1,
+			{
+				PTR,
+			}
+	},
+	{
+		"sethostname", 2,
+			{
+				STR,
+				INT,
+			}
+	},
+	{
+		"setrlimit", 2,
+			{
+				UINT,
+				PTR,
+			}
+	},
+	{
+		"getrlimit", 2,
+			{
+				UINT,
+				PTR,
+			}
+	},
+	{
+		"getrusage", 2,
+			{
+				INT,
+				PTR,
+			}
+	},
+	{
+		"gettimeofday", 2,
+			{
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"settimeofday", 2,
+			{
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"getgroups16", 2,
+			{
+				INT,
+				PTR,
+			}
+	},
+	{
+		"setgroups16", 2,
+			{
+				INT,
+				PTR,
+			}
+	},
+	{
+		"select", 1,
+			{
+				PTR,
+			}
+	},
+	{
+		"symlink", 2,
+			{
+				STR,
+				STR,
+			}
+	},
+	{
+		"lstat", 2,
+			{
+				STR,
+				PTR,
+			}
+	},
+	{
+		"readlink", 3,
+			{
+				PTR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"uselib", 1,
+			{
+				PTR,
+			}
+	},
+	{
+		"swapon", 2,
+			{
+				PTR,
+				INT,
+			}
+	},
+	{
+		"reboot", 4,
+			{
+				INT,
+				INT,
+				UINT,
+				PTR,
+			}
+	},
+	{
+		"readdir", 3,
+			{
+				UINT,
+				PTR,
+				UINT,
+			}
+	},
+	{
+		"mmap", 1,
+			{
+				PTR,
+			}
+	},
+	{
+		"munmap", 2,
+			{
+				UINT,
+				INT,
+			}
+	},
+	{
+		"truncate", 2,
+			{
+				PTR,
+				INT,
+			}
+	},
+	{
+		"ftruncate", 2,
+			{
+				UINT,
+				INT,
+			}
+	},
+	{
+		"fchmod", 2,
+			{
+				UINT,
+				INT,
+			}
+	},
+	{
+		"fchown16", 3,
+			{
+				UINT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"getpriority", 2,
+			{
+				INT,
+				INT,
+			}
+	},
+	{
+		"setpriority", 3,
+			{
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{0, 0, {}},
+	{
+		"statfs", 2,
+			{
+				STR,
+				PTR,
+			}
+	},
+	{
+		"fstatfs", 2,
+			{
+				UINT,
+				PTR,
+			}
+	},
+	{
+		"ioperm", 3,
+			{
+				UINT,
+				UINT,
+				INT,
+			}
+	},
+	{
+		"socketcall", 2,
+			{
+				INT,
+				PTR,
+			}
+	},
+	{
+		"syslog", 3,
+			{
+				INT,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"setitimer", 3,
+			{
+				INT,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"getitimer", 2,
+			{
+				INT,
+				PTR,
+			}
+	},
+	{
+		"newstat", 2,
+			{
+				STR,
+				PTR,
+			}
+	},
+	{
+		"newlstat", 2,
+			{
+				STR,
+				PTR,
+			}
+	},
+	{
+		"newfstat", 2,
+			{
+				UINT,
+				PTR,
+			}
+	},
+	{
+		"uname", 1,
+			{
+				PTR,
+			}
+	},
+	{
+		"iopl", 1,
+			{
+				UINT,
+			}
+	},
+	{
+		"vhangup", 0,
+			{
+			}
+	},
+	{0, 0, {}},
+	{0, 0, {}},
+	{
+		"wait4", 4,
+			{
+				INT,
+				PTR,
+				INT,
+				PTR,
+			}
+	},
+	{
+		"swapoff", 1,
+			{
+				PTR,
+			}
+	},
+	{
+		"sysinfo", 1,
+			{
+				PTR,
+			}
+	},
+	{
+		"ipc", 6,
+			{
+				INT,
+				INT,
+				INT,
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"fsync", 1,
+			{
+				UINT,
+			}
+	},
+	{
+		"sigreturn", 0,
+			{
+			}
+	},
+	{
+		"clone", 5,
+			{
+				UINT,
+				UINT,
+				PTR,
+				UINT,
+				PTR,
+			}
+	},
+	{
+		"setdomainname", 2,
+			{
+				STR,
+				INT,
+			}
+	},
+	{
+		"newuname", 1,
+			{
+				PTR,
+			}
+	},
+	{
+		"modify_ldt", 3,
+			{
+				INT,
+				PTR,
+				UINT,
+			}
+	},
+	{
+		"adjtimex", 1,
+			{
+				PTR,
+			}
+	},
+	{
+		"mprotect", 3,
+			{
+				UINT,
+				INT,
+				UINT,
+			}
+	},
+	{
+		"sigprocmask", 3,
+			{
+				INT,
+				PTR,
+				PTR,
+			}
+	},
+	{0, 0, {}},
+	{
+		"init_module", 3,
+			{
+				PTR,
+				UINT,
+				PTR,
+			}
+	},
+	{
+		"delete_module", 2,
+			{
+				STR,
+				UINT,
+			}
+	},
+	{0, 0, {}},
+	{
+		"quotactl", 4,
+			{
+				UINT,
+				PTR,
+				INT,
+				PTR,
+			}
+	},
+	{
+		"getpgid", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"fchdir", 1,
+			{
+				UINT,
+			}
+	},
+	{0, 0, {}},
+	{
+		"sysfs", 3,
+			{
+				INT,
+				UINT,
+				UINT,
+			}
+	},
+	{
+		"personality", 1,
+			{
+				UINT,
+			}
+	},
+	{0, 0, {}},
+	{
+		"setfsuid16", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"setfsgid16", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"llseek", 5,
+			{
+				UINT,
+				UINT,
+				UINT,
+				PTR,
+				UINT,
+			}
+	},
+	{
+		"getdents", 3,
+			{
+				UINT,
+				PTR,
+				UINT,
+			}
+	},
+	{
+		"select", 5,
+			{
+				INT,
+				PTR,
+				PTR,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"flock", 2,
+			{
+				UINT,
+				UINT,
+			}
+	},
+	{
+		"msync", 3,
+			{
+				UINT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"readv", 3,
+			{
+				UINT,
+				PTR,
+				UINT,
+			}
+	},
+	{
+		"writev", 3,
+			{
+				UINT,
+				PTR,
+				UINT,
+			}
+	},
+	{
+		"getsid", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"fdatasync", 1,
+			{
+				UINT,
+			}
+	},
+	{0, 0, {}},
+	{
+		"mlock", 2,
+			{
+				UINT,
+				INT,
+			}
+	},
+	{
+		"munlock", 2,
+			{
+				UINT,
+				INT,
+			}
+	},
+	{
+		"mlockall", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"munlockall", 0,
+			{
+			}
+	},
+	{
+		"sched_setparam", 2,
+			{
+				INT,
+				PTR,
+			}
+	},
+	{
+		"sched_getparam", 2,
+			{
+				INT,
+				PTR,
+			}
+	},
+	{
+		"sched_setscheduler", 3,
+			{
+				INT,
+				INT,
+				PTR,
+			}
+	},
+	{
+		"sched_getscheduler", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"sched_yield", 0,
+			{
+			}
+	},
+	{
+		"sched_get_priority_max", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"sched_get_priority_min", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"sched_rr_get_interval", 2,
+			{
+				INT,
+				PTR,
+			}
+	},
+	{
+		"nanosleep", 2,
+			{
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"mremap", 5,
+			{
+				UINT,
+				UINT,
+				UINT,
+				UINT,
+				UINT,
+			}
+	},
+	{
+		"setresuid16", 3,
+			{
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"getresuid16", 3,
+			{
+				PTR,
+				PTR,
+				PTR,
+			}
+	},
+	{0, 0, {}},
+	{0, 0, {}},
+	{
+		"poll", 3,
+			{
+				PTR,
+				UINT,
+				INT,
+			}
+	},
+	{0, 0, {}},
+	{
+		"setresgid16", 3,
+			{
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"getresgid16", 3,
+			{
+				PTR,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"prctl", 5,
+			{
+				INT,
+				UINT,
+				UINT,
+				UINT,
+				UINT,
+			}
+	},
+	{
+		"rt_sigreturn", 0,
+			{
+			}
+	},
+	{
+		"rt_sigaction", 4,
+			{
+				INT,
+				PTR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"rt_sigprocmask", 4,
+			{
+				INT,
+				PTR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"rt_sigpending", 2,
+			{
+				PTR,
+				INT,
+			}
+	},
+	{
+		"rt_sigtimedwait", 4,
+			{
+				PTR,
+				PTR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"rt_sigqueueinfo", 3,
+			{
+				INT,
+				INT,
+				PTR,
+			}
+	},
+	{
+		"rt_sigsuspend", 2,
+			{
+				PTR,
+				INT,
+			}
+	},
+	{
+		"pread64", 5,
+			{
+				UINT,
+				PTR,
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"pwrite64", 5,
+			{
+				UINT,
+				PTR,
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"chown16", 3,
+			{
+				STR,
+				INT,
+				INT,
+			}
+	},
+	{
+		"getcwd", 2,
+			{
+				PTR,
+				UINT,
+			}
+	},
+	{
+		"capget", 2,
+			{
+				INT,
+				INT,
+			}
+	},
+	{
+		"capset", 2,
+			{
+				INT,
+				INT,
+			}
+	},
+	{
+		"sigaltstack", 2,
+			{
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"sendfile", 4,
+			{
+				INT,
+				INT,
+				PTR,
+				INT,
+			}
+	},
+	{0, 0, {}},
+	{0, 0, {}},
+	{
+		"vfork", 0,
+			{
+			}
+	},
+	{
+		"getrlimit", 2,
+			{
+				UINT,
+				PTR,
+			}
+	},
+	{
+		"mmap_pgoff", 6,
+			{
+				UINT,
+				UINT,
+				UINT,
+				UINT,
+				UINT,
+				UINT,
+			}
+	},
+	{
+		"truncate64", 3,
+			{
+				STR,
+				UINT,
+				UINT,
+			}
+	},
+	{
+		"ftruncate64", 3,
+			{
+				UINT,
+				UINT,
+				UINT,
+			}
+	},
+	{
+		"stat64", 2,
+			{
+				STR,
+				PTR,
+			}
+	},
+	{
+		"lstat64", 2,
+			{
+				STR,
+				PTR,
+			}
+	},
+	{
+		"fstat64", 2,
+			{
+				UINT,
+				PTR,
+			}
+	},
+	{
+		"lchown", 3,
+			{
+				STR,
+				INT,
+				INT,
+			}
+	},
+	{
+		"getuid", 0,
+			{
+			}
+	},
+	{
+		"getgid", 0,
+			{
+			}
+	},
+	{
+		"geteuid", 0,
+			{
+			}
+	},
+	{
+		"getegid", 0,
+			{
+			}
+	},
+	{
+		"setreuid", 2,
+			{
+				INT,
+				INT,
+			}
+	},
+	{
+		"setregid", 2,
+			{
+				INT,
+				INT,
+			}
+	},
+	{
+		"getgroups", 2,
+			{
+				INT,
+				PTR,
+			}
+	},
+	{
+		"setgroups", 2,
+			{
+				INT,
+				PTR,
+			}
+	},
+	{
+		"fchown", 3,
+			{
+				UINT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"setresuid", 3,
+			{
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"getresuid", 3,
+			{
+				PTR,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"setresgid", 3,
+			{
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"getresgid", 3,
+			{
+				PTR,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"chown", 3,
+			{
+				STR,
+				INT,
+				INT,
+			}
+	},
+	{
+		"setuid", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"setgid", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"setfsuid", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"setfsgid", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"pivot_root", 2,
+			{
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"mincore", 3,
+			{
+				UINT,
+				INT,
+				PTR,
+			}
+	},
+	{
+		"madvise", 3,
+			{
+				UINT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"getdents64", 3,
+			{
+				UINT,
+				PTR,
+				UINT,
+			}
+	},
+	{
+		"fcntl64", 3,
+			{
+				UINT,
+				UINT,
+				INT,
+			}
+	},
+	{0, 0, {}},
+	{0, 0, {}},
+	{
+		"gettid", 0,
+			{
+			}
+	},
+	{
+		"readahead", 4,
+			{
+				INT,
+				UINT,
+				UINT,
+				INT,
+			}
+	},
+	{
+		"setxattr", 5,
+			{
+				STR,
+				STR,
+				PTR,
+				INT,
+				INT,
+			}
+	},
+	{
+		"lsetxattr", 5,
+			{
+				STR,
+				STR,
+				PTR,
+				INT,
+				INT,
+			}
+	},
+	{
+		"fsetxattr", 5,
+			{
+				INT,
+				STR,
+				PTR,
+				INT,
+				INT,
+			}
+	},
+	{
+		"getxattr", 4,
+			{
+				STR,
+				STR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"lgetxattr", 4,
+			{
+				STR,
+				STR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"fgetxattr", 4,
+			{
+				INT,
+				STR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"listxattr", 3,
+			{
+				STR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"llistxattr", 3,
+			{
+				STR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"flistxattr", 3,
+			{
+				INT,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"removexattr", 2,
+			{
+				STR,
+				STR,
+			}
+	},
+	{
+		"lremovexattr", 2,
+			{
+				STR,
+				STR,
+			}
+	},
+	{
+		"fremovexattr", 2,
+			{
+				INT,
+				STR,
+			}
+	},
+	{
+		"tkill", 2,
+			{
+				INT,
+				INT,
+			}
+	},
+	{
+		"sendfile64", 4,
+			{
+				INT,
+				INT,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"futex", 6,
+			{
+				PTR,
+				INT,
+				INT,
+				PTR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"sched_setaffinity", 3,
+			{
+				INT,
+				UINT,
+				PTR,
+			}
+	},
+	{
+		"sched_getaffinity", 3,
+			{
+				INT,
+				UINT,
+				PTR,
+			}
+	},
+	{
+		"set_thread_area", 1,
+			{
+				PTR,
+			}
+	},
+	{
+		"get_thread_area", 1,
+			{
+				PTR,
+			}
+	},
+	{
+		"io_setup", 2,
+			{
+				UINT,
+				PTR,
+			}
+	},
+	{
+		"io_destroy", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"io_getevents", 5,
+			{
+				INT,
+				INT,
+				INT,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"io_submit", 3,
+			{
+				INT,
+				INT,
+				PTR,
+			}
+	},
+	{
+		"io_cancel", 3,
+			{
+				INT,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"fadvise64", 5,
+			{
+				INT,
+				UINT,
+				UINT,
+				INT,
+				INT,
+			}
+	},
+	{0, 0, {}},
+	{
+		"exit_group", 1,
+			{
+				INT,
+			}
+	},
+	{0, 0, {}},
+	{
+		"epoll_create", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"epoll_ctl", 4,
+			{
+				INT,
+				INT,
+				INT,
+				PTR,
+			}
+	},
+	{
+		"epoll_wait", 4,
+			{
+				INT,
+				PTR,
+				INT,
+				INT,
+			}
+	},
+	{
+		"remap_file_pages", 5,
+			{
+				UINT,
+				UINT,
+				UINT,
+				UINT,
+				UINT,
+			}
+	},
+	{
+		"set_tid_address", 1,
+			{
+				PTR,
+			}
+	},
+	{
+		"timer_create", 3,
+			{
+				INT,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"timer_settime", 4,
+			{
+				INT,
+				INT,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"timer_gettime", 2,
+			{
+				INT,
+				PTR,
+			}
+	},
+	{
+		"timer_getoverrun", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"timer_delete", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"clock_settime", 2,
+			{
+				INT,
+				PTR,
+			}
+	},
+	{
+		"clock_gettime", 2,
+			{
+				INT,
+				PTR,
+			}
+	},
+	{
+		"clock_getres", 2,
+			{
+				INT,
+				PTR,
+			}
+	},
+	{
+		"clock_nanosleep", 4,
+			{
+				INT,
+				INT,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"statfs64", 3,
+			{
+				STR,
+				INT,
+				PTR,
+			}
+	},
+	{
+		"fstatfs64", 3,
+			{
+				UINT,
+				INT,
+				PTR,
+			}
+	},
+	{
+		"tgkill", 3,
+			{
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"utimes", 2,
+			{
+				STR,
+				PTR,
+			}
+	},
+	{
+		"fadvise64_64", 6,
+			{
+				INT,
+				INT,
+				INT,
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{0, 0, {}},
+	{
+		"mbind", 6,
+			{
+				UINT,
+				UINT,
+				UINT,
+				PTR,
+				UINT,
+				UINT,
+			}
+	},
+	{
+		"get_mempolicy", 5,
+			{
+				PTR,
+				PTR,
+				UINT,
+				UINT,
+				UINT,
+			}
+	},
+	{
+		"set_mempolicy", 3,
+			{
+				INT,
+				PTR,
+				UINT,
+			}
+	},
+	{
+		"mq_open", 4,
+			{
+				STR,
+				INT,
+				INT,
+				PTR,
+			}
+	},
+	{
+		"mq_unlink", 1,
+			{
+				STR,
+			}
+	},
+	{
+		"mq_timedsend", 5,
+			{
+				INT,
+				PTR,
+				UINT,
+				UINT,
+				PTR,
+			}
+	},
+	{
+		"mq_timedreceive", 5,
+			{
+				INT,
+				PTR,
+				UINT,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"mq_notify", 2,
+			{
+				INT,
+				PTR,
+			}
+	},
+	{
+		"mq_getsetattr", 3,
+			{
+				INT,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"kexec_load", 4,
+			{
+				INT,
+				INT,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"waitid", 5,
+			{
+				INT,
+				INT,
+				PTR,
+				INT,
+				PTR,
+			}
+	},
+	{0, 0, {}},
+	{
+		"add_key", 5,
+			{
+				PTR,
+				PTR,
+				PTR,
+				INT,
+				INT,
+			}
+	},
+	{
+		"request_key", 4,
+			{
+				PTR,
+				PTR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"keyctl", 5,
+			{
+				INT,
+				INT,
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"ioprio_set", 3,
+			{
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"ioprio_get", 2,
+			{
+				INT,
+				INT,
+			}
+	},
+	{
+		"inotify_init", 0,
+			{
+			}
+	},
+	{
+		"inotify_add_watch", 3,
+			{
+				INT,
+				STR,
+				INT,
+			}
+	},
+	{
+		"inotify_rm_watch", 2,
+			{
+				INT,
+				INT,
+			}
+	},
+	{
+		"migrate_pages", 4,
+			{
+				INT,
+				UINT,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"openat", 4,
+			{
+				INT,
+				STR,
+				INT,
+				INT,
+			}
+	},
+	{
+		"mkdirat", 3,
+			{
+				INT,
+				STR,
+				INT,
+			}
+	},
+	{
+		"mknodat", 4,
+			{
+				INT,
+				STR,
+				INT,
+				UINT,
+			}
+	},
+	{
+		"fchownat", 5,
+			{
+				INT,
+				STR,
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"futimesat", 3,
+			{
+				UINT,
+				STR,
+				PTR,
+			}
+	},
+	{
+		"fstatat64", 4,
+			{
+				UINT,
+				STR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"unlinkat", 3,
+			{
+				INT,
+				STR,
+				INT,
+			}
+	},
+	{
+		"renameat", 4,
+			{
+				INT,
+				STR,
+				INT,
+				STR,
+			}
+	},
+	{
+		"linkat", 5,
+			{
+				INT,
+				STR,
+				INT,
+				STR,
+				INT,
+			}
+	},
+	{
+		"symlinkat", 3,
+			{
+				STR,
+				INT,
+				STR,
+			}
+	},
+	{
+		"readlinkat", 4,
+			{
+				INT,
+				STR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"fchmodat", 3,
+			{
+				INT,
+				STR,
+				INT,
+			}
+	},
+	{
+		"faccessat", 3,
+			{
+				INT,
+				STR,
+				INT,
+			}
+	},
+	{
+		"pselect6", 6,
+			{
+				INT,
+				PTR,
+				PTR,
+				PTR,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"ppoll", 5,
+			{
+				PTR,
+				UINT,
+				PTR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"unshare", 1,
+			{
+				UINT,
+			}
+	},
+	{
+		"set_robust_list", 2,
+			{
+				PTR,
+				INT,
+			}
+	},
+	{
+		"get_robust_list", 3,
+			{
+				INT,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"splice", 6,
+			{
+				INT,
+				PTR,
+				INT,
+				PTR,
+				INT,
+				UINT,
+			}
+	},
+	{
+		"sync_file_range", 6,
+			{
+				INT,
+				UINT,
+				UINT,
+				UINT,
+				UINT,
+				INT,
+			}
+	},
+	{
+		"tee", 4,
+			{
+				INT,
+				INT,
+				INT,
+				UINT,
+			}
+	},
+	{
+		"vmsplice", 4,
+			{
+				INT,
+				PTR,
+				UINT,
+				UINT,
+			}
+	},
+	{
+		"move_pages", 6,
+			{
+				INT,
+				UINT,
+				PTR,
+				PTR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"getcpu", 3,
+			{
+				PTR,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"epoll_pwait", 6,
+			{
+				INT,
+				PTR,
+				INT,
+				INT,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"utimensat", 4,
+			{
+				UINT,
+				STR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"signalfd", 3,
+			{
+				INT,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"timerfd_create", 2,
+			{
+				INT,
+				INT,
+			}
+	},
+	{
+		"eventfd", 1,
+			{
+				UINT,
+			}
+	},
+	{
+		"fallocate", 6,
+			{
+				INT,
+				INT,
+				UINT,
+				UINT,
+				UINT,
+				UINT,
+			}
+	},
+	{
+		"timerfd_settime", 4,
+			{
+				INT,
+				INT,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"timerfd_gettime", 2,
+			{
+				INT,
+				PTR,
+			}
+	},
+	{
+		"signalfd4", 4,
+			{
+				INT,
+				PTR,
+				INT,
+				INT,
+			}
+	},
+	{
+		"eventfd2", 2,
+			{
+				UINT,
+				INT,
+			}
+	},
+	{
+		"epoll_create1", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"dup3", 3,
+			{
+				UINT,
+				UINT,
+				INT,
+			}
+	},
+	{
+		"pipe2", 2,
+			{
+				PTR,
+				INT,
+			}
+	},
+	{
+		"inotify_init1", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"preadv", 5,
+			{
+				INT,
+				PTR,
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"pwritev", 5,
+			{
+				INT,
+				PTR,
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"rt_tgsigqueueinfo", 4,
+			{
+				INT,
+				INT,
+				INT,
+				PTR,
+			}
+	},
+	{
+		"perf_event_open", 5,
+			{
+				PTR,
+				INT,
+				INT,
+				INT,
+				UINT,
+			}
+	},
+	{
+		"recvmmsg", 5,
+			{
+				INT,
+				PTR,
+				UINT,
+				UINT,
+				PTR,
+			}
+	},
+	{
+		"fanotify_init", 2,
+			{
+				UINT,
+				UINT,
+			}
+	},
+	{
+		"fanotify_mark", 6,
+			{
+				INT,
+				UINT,
+				INT,
+				INT,
+				INT,
+				STR,
+			}
+	},
+	{
+		"prlimit64", 4,
+			{
+				INT,
+				UINT,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"name_to_handle_at", 5,
+			{
+				INT,
+				STR,
+				PTR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"open_by_handle_at", 3,
+			{
+				INT,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"clock_adjtime", 2,
+			{
+				INT,
+				PTR,
+			}
+	},
+	{
+		"syncfs", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"sendmmsg", 4,
+			{
+				INT,
+				PTR,
+				UINT,
+				UINT,
+			}
+	},
+	{
+		"setns", 2,
+			{
+				INT,
+				INT,
+			}
+	},
+	{
+		"process_vm_readv", 6,
+			{
+				INT,
+				PTR,
+				UINT,
+				PTR,
+				UINT,
+				UINT,
+			}
+	},
+	{
+		"process_vm_writev", 6,
+			{
+				INT,
+				PTR,
+				UINT,
+				PTR,
+				UINT,
+				UINT,
+			}
+	},
+	{
+		"kcmp", 5,
+			{
+				INT,
+				INT,
+				INT,
+				UINT,
+				UINT,
+			}
+	},
+	{
+		"finit_module", 3,
+			{
+				INT,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"sched_setattr", 3,
+			{
+				INT,
+				PTR,
+				UINT,
+			}
+	},
+	{
+		"sched_getattr", 4,
+			{
+				INT,
+				PTR,
+				UINT,
+				UINT,
+			}
+	},
+	{
+		"renameat2", 5,
+			{
+				INT,
+				STR,
+				INT,
+				STR,
+				UINT,
+			}
+	},
+	{
+		"seccomp", 3,
+			{
+				UINT,
+				UINT,
+				PTR,
+			}
+	},
+	{
+		"getrandom", 3,
+			{
+				PTR,
+				INT,
+				UINT,
+			}
+	},
+	{
+		"memfd_create", 2,
+			{
+				STR,
+				UINT,
+			}
+	},
+	{
+		"bpf", 3,
+			{
+				INT,
+				PTR,
+				UINT,
+			}
+	},
+	{
+		"execveat", 5,
+			{
+				INT,
+				STR,
+				PTR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"socket", 3,
+			{
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"socketpair", 4,
+			{
+				INT,
+				INT,
+				INT,
+				PTR,
+			}
+	},
+	{
+		"bind", 3,
+			{
+				INT,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"connect", 3,
+			{
+				INT,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"listen", 2,
+			{
+				INT,
+				INT,
+			}
+	},
+	{
+		"accept4", 4,
+			{
+				INT,
+				PTR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"getsockopt", 5,
+			{
+				INT,
+				INT,
+				INT,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"setsockopt", 5,
+			{
+				INT,
+				INT,
+				INT,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"getsockname", 3,
+			{
+				INT,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"getpeername", 3,
+			{
+				INT,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"sendto", 6,
+			{
+				INT,
+				PTR,
+				INT,
+				UINT,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"sendmsg", 3,
+			{
+				INT,
+				PTR,
+				UINT,
+			}
+	},
+	{
+		"recvfrom", 6,
+			{
+				INT,
+				PTR,
+				INT,
+				UINT,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"recvmsg", 3,
+			{
+				INT,
+				PTR,
+				UINT,
+			}
+	},
+	{
+		"shutdown", 2,
+			{
+				INT,
+				INT,
+			}
+	},
+	{
+		"userfaultfd", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"membarrier", 3,
+			{
+				INT,
+				UINT,
+				INT,
+			}
+	},
+	{
+		"mlock2", 3,
+			{
+				UINT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"copy_file_range", 6,
+			{
+				INT,
+				PTR,
+				INT,
+				PTR,
+				INT,
+				UINT,
+			}
+	},
+	{
+		"preadv2", 6,
+			{
+				INT,
+				PTR,
+				INT,
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"pwritev2", 6,
+			{
+				INT,
+				PTR,
+				INT,
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"pkey_mprotect", 4,
+			{
+				UINT,
+				INT,
+				UINT,
+				INT,
+			}
+	},
+	{
+		"pkey_alloc", 2,
+			{
+				UINT,
+				UINT,
+			}
+	},
+	{
+		"pkey_free", 1,
+			{
+				INT,
+			}
+	},
+	{
+		"statx", 5,
+			{
+				INT,
+				STR,
+				UINT,
+				UINT,
+				PTR,
+			}
+	},
+	{
+		"arch_prctl", 2,
+			{
+				INT,
+				UINT,
+			}
+	},
+	{
+		"io_pgetevents", 6,
+			{
+				INT,
+				INT,
+				INT,
+				PTR,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"rseq", 4,
+			{
+				PTR,
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{0, 0, {}},
+	{0, 0, {}},
+	{0, 0, {}},
+	{0, 0, {}},
+	{0, 0, {}},
+	{0, 0, {}},
+	{
+		"semget", 3,
+			{
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"semctl", 4,
+			{
+				INT,
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"shmget", 3,
+			{
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"shmctl", 3,
+			{
+				INT,
+				INT,
+				PTR,
+			}
+	},
+	{
+		"shmat", 3,
+			{
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"shmdt", 1,
+			{
+				PTR,
+			}
+	},
+	{
+		"msgget", 2,
+			{
+				INT,
+				INT,
+			}
+	},
+	{
+		"msgsnd", 4,
+			{
+				INT,
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"msgrcv", 5,
+			{
+				INT,
+				INT,
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"msgctl", 3,
+			{
+				INT,
+				INT,
+				PTR,
+			}
+	},
+	{
+		"clock_gettime", 2,
+			{
+				INT,
+				PTR,
+			}
+	},
+	{
+		"clock_settime", 2,
+			{
+				INT,
+				PTR,
+			}
+	},
+	{
+		"clock_adjtime", 2,
+			{
+				INT,
+				PTR,
+			}
+	},
+	{
+		"clock_getres", 2,
+			{
+				INT,
+				PTR,
+			}
+	},
+	{
+		"clock_nanosleep", 4,
+			{
+				INT,
+				INT,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"timer_gettime", 2,
+			{
+				INT,
+				PTR,
+			}
+	},
+	{
+		"timer_settime", 4,
+			{
+				INT,
+				INT,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"timerfd_gettime", 2,
+			{
+				INT,
+				PTR,
+			}
+	},
+	{
+		"timerfd_settime", 4,
+			{
+				INT,
+				INT,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"utimensat", 4,
+			{
+				INT,
+				STR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"pselect6", 6,
+			{
+				INT,
+				PTR,
+				PTR,
+				PTR,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"ppoll", 5,
+			{
+				PTR,
+				UINT,
+				PTR,
+				PTR,
+				INT,
+			}
+	},
+	{0, 0, {}},
+	{
+		"io_pgetevents", 6,
+			{
+				INT,
+				INT,
+				INT,
+				PTR,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"recvmmsg", 5,
+			{
+				INT,
+				PTR,
+				UINT,
+				UINT,
+				PTR,
+			}
+	},
+	{
+		"mq_timedsend", 5,
+			{
+				INT,
+				PTR,
+				INT,
+				UINT,
+				PTR,
+			}
+	},
+	{
+		"mq_timedreceive", 5,
+			{
+				INT,
+				PTR,
+				INT,
+				PTR,
+				PTR,
+			}
+	},
+	{
+		"semtimedop", 4,
+			{
+				INT,
+				PTR,
+				UINT,
+				PTR,
+			}
+	},
+	{
+		"rt_sigtimedwait", 4,
+			{
+				PTR,
+				PTR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"futex", 6,
+			{
+				PTR,
+				INT,
+				INT,
+				PTR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"sched_rr_get_interval", 2,
+			{
+				INT,
+				PTR,
+			}
+	},
+	{
+		"pidfd_send_signal", 4,
+			{
+				INT,
+				INT,
+				PTR,
+				UINT,
+			}
+	},
+	{
+		"io_uring_setup", 2,
+			{
+				INT,
+				PTR,
+			}
+	},
+	{
+		"io_uring_enter", 6,
+			{
+				UINT,
+				INT,
+				INT,
+				INT,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"io_uring_register", 4,
+			{
+				UINT,
+				UINT,
+				PTR,
+				UINT,
+			}
+	},
+	{
+		"open_tree", 3,
+			{
+				INT,
+				STR,
+				UINT,
+			}
+	},
+	{
+		"move_mount", 5,
+			{
+				INT,
+				STR,
+				INT,
+				STR,
+				UINT,
+			}
+	},
+	{
+		"fsopen", 2,
+			{
+				STR,
+				UINT,
+			}
+	},
+	{
+		"fsconfig", 5,
+			{
+				INT,
+				UINT,
+				PTR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"fsmount", 3,
+			{
+				INT,
+				UINT,
+				UINT,
+			}
+	},
+	{
+		"fspick", 3,
+			{
+				INT,
+				PTR,
+				UINT,
+			}
+	},
+	{
+		"pidfd_open", 2,
+			{
+				INT,
+				UINT,
+			}
+	},
+	{
+		"clone3", 2,
+			{
+				PTR,
+				INT,
+			}
+	},
+	{
+		"close_range", 3,
+			{
+				UINT,
+				UINT,
+				UINT,
+			}
+	},
+	{
+		"openat2", 4,
+			{
+				INT,
+				STR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"pidfd_getfd", 3,
+			{
+				INT,
+				INT,
+				UINT,
+			}
+	},
+	{
+		"faccessat2", 4,
+			{
+				INT,
+				STR,
+				INT,
+				INT,
+			}
+	},
+	{
+		"process_madvise", 5,
+			{
+				INT,
+				PTR,
+				INT,
+				INT,
+				UINT,
+			}
+	},
+	{
+		"epoll_pwait2", 6,
+			{
+				INT,
+				PTR,
+				INT,
+				PTR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"mount_setattr", 5,
+			{
+				INT,
+				PTR,
+				UINT,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"quotactl_fd", 4,
+			{
+				UINT,
+				UINT,
+				INT,
+				PTR,
+			}
+	},
+	{
+		"landlock_create_ruleset", 3,
+			{
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"landlock_add_rule", 4,
+			{
+				INT,
+				INT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"landlock_restrict_self", 2,
+			{
+				INT,
+				INT,
+			}
+	},
+	{
+		"memfd_secret", 1,
+			{
+				UINT,
+			}
+	},
+	{
+		"process_mrelease", 2,
+			{
+				INT,
+				UINT,
+			}
+	},
+	{
+		"futex_waitv", 5,
+			{
+				PTR,
+				UINT,
+				UINT,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"set_mempolicy_home_node", 4,
+			{
+				UINT,
+				UINT,
+				UINT,
+				UINT,
+			}
+	},
+	{
+		"cachestat", 4,
+			{
+				UINT,
+				PTR,
+				PTR,
+				UINT,
+			}
+	},
+	{
+		"fchmodat2", 4,
+			{
+				INT,
+				STR,
+				INT,
+				UINT,
+			}
+	},
+	{
+		"map_shadow_stack", 3,
+			{
+				UINT,
+				UINT,
+				UINT,
+			}
+	},
+	{
+		"futex_wake", 4,
+			{
+				PTR,
+				UINT,
+				INT,
+				UINT,
+			}
+	},
+	{
+		"futex_wait", 6,
+			{
+				PTR,
+				UINT,
+				UINT,
+				UINT,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"futex_requeue", 4,
+			{
+				PTR,
+				UINT,
+				INT,
+				INT,
+			}
+	},
+	{
+		"statmount", 4,
+			{
+				PTR,
+				PTR,
+				INT,
+				UINT,
+			}
+	},
+	{
+		"listmount", 4,
+			{
+				PTR,
+				PTR,
+				INT,
+				UINT,
+			}
+	},
+	{
+		"lsm_get_self_attr", 4,
+			{
+				UINT,
+				PTR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"lsm_set_self_attr", 4,
+			{
+				UINT,
+				PTR,
+				INT,
+				INT,
+			}
+	},
+	{
+		"lsm_list_modules", 3,
+			{
+				PTR,
+				PTR,
+				INT,
+			}
+	},
+	{
+		"mseal", 3,
+			{
+				UINT,
+				INT,
+				UINT,
+			}
+	},
+};
+#endif

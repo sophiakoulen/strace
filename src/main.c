@@ -1,7 +1,6 @@
 #define _GNU_SOURCE
-#include "ft_syscalls.h"
-#include "ft_syscalls32.h"
 #include "ft_strace.h"
+#include "ft_syscalls.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -188,13 +187,13 @@ void print_sys_enter(int pid)
 		}
 
 		struct user_regs_struct *regs = data.iov_base;
-		fprintf(stderr,"%s(", syscalls[regs->orig_rax].name);
-		unsigned int l = syscalls[regs->orig_rax].arg_count;
+		fprintf(stderr,"%s(", syscalls64[regs->orig_rax].name);
+		unsigned int l = syscalls64[regs->orig_rax].arg_count;
 		unsigned long long int args[6] = {regs->rdi, regs->rsi, regs->rdx, regs->r10, regs->r8, regs->r9};
 		unsigned int i;
 		for (i = 0; i < l; i++)
 		{
-			print_arg64(pid, args[i], (syscalls[regs->orig_rax].args)[i]);
+			print_arg64(pid, args[i], (syscalls64[regs->orig_rax].args)[i]);
 			if (i + 1 < l)
 				fprintf(stderr,", ");
 			else
