@@ -141,14 +141,33 @@ void print_arg32(uint32_t reg, enum arg_type_e type)
 		 printf("%p", (void*)reg);
 }
 
-void print_arg64(unsigned long long int reg, enum arg_type_e type)
+void print_arg64(int pid, unsigned long long int reg, enum arg_type_e type)
 {
 	 if (type == INT)
 		 printf("%lld", reg);
 	 else if (type == UINT)
 		 printf("%llu", reg);
 	 else if (type == STR)
-		printf("\"%s\"", (char*)reg);
+	 {
+		 char          buf1[1024];
+         struct iovec  local[1];
+         struct iovec  remote[1];
+
+           local[0].iov_base = buf1;
+           local[0].iov_len = 1024;
+           
+		   remote[0].iov_base = (void *)reg;
+           remote[0].iov_len = 1024;
+
+           ssize_t nread = process_vm_readv(pid, local, 1, remote, 1, 0);
+           if (nread == -1)
+		   {
+               perror("problem with process_vm_readv");
+			   exit(-1);
+		   }
+		   else
+		printf("\"%s\"", (char*)(local[0].iov_base));
+	 }
 	 else
 		 printf("%p", (void*)reg);
 }
@@ -179,11 +198,11 @@ void print_sys_enter(int pid)
 		unsigned int i;
 		for (i = 0; i + 1 < l; i++)
 		{
-			print_arg64(args[i], (syscalls[regs->orig_rax].args)[i]);
+			print_arg64(pid, args[i], (syscalls[regs->orig_rax].args)[i]);
 			printf(", ");
 		}
 		if (l > 0)
-			print_arg64(args[i], syscalls[regs->orig_rax].args[i]);
+			print_arg64(pid, args[i], syscalls[regs->orig_rax].args[i]);
 		printf(")");
 	}
 	else if (data.iov_len == sizeof(struct i386_user_regs_struct))
