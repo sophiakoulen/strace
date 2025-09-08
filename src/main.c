@@ -249,7 +249,10 @@ void print_sys_exit(int pid)
 	{
 		struct user_regs_struct *regs = data.iov_base;
 		if ((long long int)regs->rax >= -4095 && (long long int)regs->rax <= -1)
-			fprintf(stderr, "\t= %s\n", strerrorname_np(-1 * regs->rax));
+		{
+			const char* err = strerrorname_np(-1 * regs->rax);
+			fprintf(stderr, "\t= %s\n", err != NULL ? err : "?");
+		}
 		else
 			fprintf(stderr, "\t= %lld\n", regs->rax);
 
@@ -263,7 +266,10 @@ void print_sys_exit(int pid)
 	{
 		struct i386_user_regs_struct *regs = data.iov_base;
 		if ((int32_t)regs->eax >= -4095 && (int32_t)regs->eax <= -1)
-			fprintf(stderr,"\t= %s\n", strerrorname_np(-1 * regs->eax));
+		{
+			const char* err = strerrorname_np(-1 * regs->eax);
+			fprintf(stderr,"\t= %s\n", err != NULL ? err : "?");
+		}
 		else
 			fprintf(stderr,"\t= %d\n", regs->eax);
 
