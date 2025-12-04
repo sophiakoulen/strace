@@ -8,7 +8,6 @@
 #include <sys/wait.h>
 #include <sys/ptrace.h>
 #include <sys/uio.h>
-#include <sys/user.h>
 #include <string.h>
 #include <errno.h>
 
@@ -30,6 +29,37 @@ struct i386_user_regs_struct {
 	uint32_t eflags;
 	uint32_t esp;
 	uint32_t xss;
+};
+
+struct x86_64_user_regs_struct
+{
+  __extension__ unsigned long long int r15;
+  __extension__ unsigned long long int r14;
+  __extension__ unsigned long long int r13;
+  __extension__ unsigned long long int r12;
+  __extension__ unsigned long long int rbp;
+  __extension__ unsigned long long int rbx;
+  __extension__ unsigned long long int r11;
+  __extension__ unsigned long long int r10;
+  __extension__ unsigned long long int r9;
+  __extension__ unsigned long long int r8;
+  __extension__ unsigned long long int rax;
+  __extension__ unsigned long long int rcx;
+  __extension__ unsigned long long int rdx;
+  __extension__ unsigned long long int rsi;
+  __extension__ unsigned long long int rdi;
+  __extension__ unsigned long long int orig_rax;
+  __extension__ unsigned long long int rip;
+  __extension__ unsigned long long int cs;
+  __extension__ unsigned long long int eflags;
+  __extension__ unsigned long long int rsp;
+  __extension__ unsigned long long int ss;
+  __extension__ unsigned long long int fs_base;
+  __extension__ unsigned long long int gs_base;
+  __extension__ unsigned long long int ds;
+  __extension__ unsigned long long int es;
+  __extension__ unsigned long long int fs;
+  __extension__ unsigned long long int gs;
 };
 
 #define IN_SYS 1
@@ -178,7 +208,7 @@ void print_sys_enter(int pid)
 		exit(1);
 	}
 
-	if (data.iov_len == sizeof(struct user_regs_struct))
+	if (data.iov_len == sizeof(struct x86_64_user_regs_struct))
 	{
 		if (current_mode != X86_64)
 		{
@@ -186,7 +216,7 @@ void print_sys_enter(int pid)
 			fprintf(stderr,"[ Process PID=%d runs in 64 bit mode. ]\n", pid);
 		}
 
-		struct user_regs_struct *regs = data.iov_base;
+		struct x86_64_user_regs_struct *regs = data.iov_base;
 		fprintf(stderr,"%s(", syscalls64[regs->orig_rax].name);
 		unsigned int l = syscalls64[regs->orig_rax].arg_count;
 		unsigned long long int args[6] = {regs->rdi, regs->rsi, regs->rdx, regs->r10, regs->r8, regs->r9};
@@ -245,9 +275,9 @@ void print_sys_exit(int pid)
 		exit(1);
 	}
 
-	if (data.iov_len == sizeof(struct user_regs_struct))
+	if (data.iov_len == sizeof(struct x86_64_user_regs_struct))
 	{
-		struct user_regs_struct *regs = data.iov_base;
+		struct x86_64_user_regs_struct *regs = data.iov_base;
 		if ((long long int)regs->rax >= -4095 && (long long int)regs->rax <= -1)
 		{
 			const char* err = strerrorname_np(-1 * regs->rax);
